@@ -1,0 +1,42 @@
+[
+  {
+    "outdoor": "DX20VC",
+    "compatibleIndoors": ["DM97MC", "DC97MC", "DM96VC", "DC96VC", "DM96SC-U", "DM80VC", "DC80VC", "DM80SC-U", "DVPEC", "DVPVC", "DVPTC", "MBVC"]
+  },
+  {
+    "outdoor": "DX17VSS",
+    "compatibleIndoors": ["DM97MC", "DC97MC", "DM96VC", "DC96VC", "DM96SC-U", "DM80VC", "DC80VC", "DM80SC-U", "DVPVC", "DVPTC", "MBVC"]
+  },
+  {
+    "outdoor": "DX18TC",
+    "compatibleIndoors": ["DM97MC", "DC97MC", "DM96VC", "DC96VC", "DM96SC-U", "DM80VC", "DC80VC", "DM80SC-U", "DVPVC", "DVPTC", "MBVC"]
+  },
+  {
+    "outdoor": "DX16TC",
+    "compatibleIndoors": ["DM97MC", "DC97MC", "DM96VC", "DC96VC", "DM96SC-U", "DM80VC", "DC80VC", "DM80SC-U", "DVPVC", "DVPTC", "MBVC"]
+  },
+  {
+    "outdoor": "DZ20VC",
+    "compatibleIndoors": ["DM97MC", "DC97MC", "DM96VC", "DC96VC", "DM96SC-U", "DM80VC", "DC80VC", "DM80SC-U", "DVPEC", "DVPVC", "DVPTC", "MBVC"]
+  },
+  {
+    "outdoor": "DZ18VC",
+    "compatibleIndoors": ["DVPEC"]
+  },
+  {
+    "outdoor": "DZ18TC",
+    "compatibleIndoors": ["DM97MC", "DC97MC", "DM96VC", "DC96VC", "DM96SC-U", "DM80VC", "DC80VC", "DM80SC-U", "DVPVC", "DVPTC", "MBVC"]
+  },
+  {
+    "outdoor": "DZ17VSA",
+    "compatibleIndoors": ["DM97MC", "DC97MC", "DM96VC", "DC96VC", "DM96SC-U", "DM80VC", "DC80VC", "DM80SC-U", "DVFEC", "MBVC"]
+  },
+  {
+    "outdoor": "DZ16TC",
+    "compatibleIndoors": ["DM97MC", "DC97MC", "DM96VC", "DC96VC", "DM96SC-U", "DM80VC", "DC80VC", "DM80SC-U", "DVPVC", "DVPTC", "MBVC"]
+  },
+  {
+    "outdoor": "Non-communicating 24v AC",
+    "compatibleIndoors": ["DM97MC", "DC97MC", "DM96VC", "DC96VC", "DM96SC-U", "DM80VC", "DC80VC", "DM80SC-U"]
+  }
+]
