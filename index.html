@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daikin System Compatibility Checker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    header img {
+      width: 200px;
+      margin-bottom: 20px;
+      padding-right: 20px;
+    }
+    label, select {
+      font-size: 1.1em;
+      margin: 10px 0;
+      display: block;
+    }
+    .details {
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+    .details p {
+      margin: 5px 0;
+    }
+    .compatible {
+      color: green;
+      font-weight: bold;
+    }
+    .incompatible {
+      color: red;
+      font-weight: bold;
+    }
+    footer {
+      margin-top: 40px;
+      border-top: 1px solid #ccc;
+      padding-top: 15px;
+      font-size: 0.95em;
+      color: #333;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="logo.png" alt="Daikin Logo">
+    <img src="amanalogo.png" alt="Amana Logo">
+    <img src="goodmanlogo.svg" alt="Goodman Logo">
+  </header>
+
+  <h2>Brand</h2>
+  <label for="brandSelect">Select Brand:</label>
+  <select id="brandSelect">
+    <option value="">-- Choose Brand --</option>
+    <option value="Daikin">Daikin</option>
+    <option value="Amana">Amana</option>
+    <option value="Goodman">Goodman</option>
+  </select>
+
+  <!-- Equipment Type dropdown only for Daikin -->
+  <div id="equipmentTypeContainer" style="display:none;">
+    <h2>Equipment Type</h2>
+    <label for="equipmentTypeSelect">Select Equipment Type:</label>
+    <select id="equipmentTypeSelect">
+      <option value="">-- Choose Equipment Type --</option>
+      <option value="Unitary">Unitary</option>
+      <option value="Mini/MultiSplit">Mini/MultiSplit</option>
+      <option value="VRV">VRV</option>
+    </select>
+  </div>
+
+  <h2>Indoor Unit (Air Handler or Furnace)</h2>
+  <label for="indoorSelect">Select Indoor Unit:</label>
+  <select id="indoorSelect">
+    <option value="">-- Choose Indoor Unit --</option>
+  </select>
+
+  <h2>Outdoor Unit (AC or Heat Pump)</h2>
+  <label for="outdoorSelect">Select Outdoor Unit:</label>
+  <select id="outdoorSelect">
+    <option value="">-- Choose Outdoor Unit --</option>
+  </select>
+
+  <div class="details" id="details"></div>
+
+  <footer>
+    <p>If you need further support, contact <strong>1-855-324-5461</strong> or email <a href="mailto:support.daikinone@daikincomfort.com">support.daikinone@daikincomfort.com</a></p>
+  </footer>
+
+  <script>
+    const outdoorUnits = [
+      { model: "DZ20VC", type: "Heat Pump", SEER2: 20, HSPF2: 10.0, communicating: true, brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DZ18VC", type: "Heat Pump", SEER2: 18, HSPF2: 10.0, communicating: true, brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DZ18TC", type: "Heat Pump", SEER2: 18, HSPF2: 10.0, communicating: true, brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DZ17VSA", type: "Heat Pump", SEER2: 17.2, HSPF2: 10.0, communicating: true, brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DZ16TC", type: "Heat Pump", SEER2: 16.0, HSPF2: 9.7, communicating: true, brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DX16TC", type: "AC", SEER2: 16.0, communicating: true, brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DX18TC", type: "AC", SEER2: 18, communicating: true, brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DX17VSS", type: "AC", SEER2: 17.2, communicating: true, brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DX20VC", type: "AC", SEER2: 20, communicating: true, brand: "Daikin", equipmentType: "Unitary" },
+      { model: "Non-communicating 24v AC", type: "AC", communicating: false, brand: "NA", equipmentType: "Unitary" },
+
+      // Example Mini/MultiSplit units
+      { model: "MXS Series", type: "Heat Pump", SEER2: 18, communicating: true, brand: "Daikin", equipmentType: "Mini/MultiSplit" },
+      { model: "MXS System", type: "AC", SEER2: 16, communicating: true, brand: "Daikin", equipmentType: "Mini/MultiSplit" },
+
+      // Example VRV units
+      { model: "VRV IV", type: "Heat Pump", SEER2: 21, communicating: true, brand: "Daikin", equipmentType: "VRV" },
+      { model: "VRV IV S-Series", type: "Heat Pump", SEER2: 22, communicating: true, brand: "Daikin", equipmentType: "VRV" }
+    ];
+
+    const indoorUnits = [
+      { model: "DVFEC", type: "Air Handler", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DVPEC", type: "Air Handler", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DVPVC", type: "Air Handler", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DVPTC", type: "Air Handler", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "MBVC", type: "Air Handler", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DM97MC", type: "Furnace", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DC97MC", type: "Furnace", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DM96VC", type: "Furnace", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DC96VC", type: "Furnace", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DM96SC-U", type: "Furnace", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DM80VC", type: "Furnace", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DC80VC", type: "Furnace", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+      { model: "DM80SC-U", type: "Furnace", compatible: "communicating", brand: "Daikin", equipmentType: "Unitary" },
+
+      // Example Mini/MultiSplit indoor units
+      { model: "FTXM Series", type: "Air Handler", compatible: "communicating", brand: "Daikin", equipmentType: "Mini/MultiSplit" },
+      { model: "FTXP Series", type: "Air Handler", compatible: "communicating", brand: "Daikin", equipmentType: "Mini/MultiSplit" },
+
+      // Example VRV indoor units
+      { model: "VRV Indoor Unit 1", type: "Air Handler", compatible: "communicating", brand: "Daikin", equipmentType: "VRV" },
+      { model: "VRV Indoor Unit 2", type: "Furnace", compatible: "communicating", brand: "Daikin", equipmentType: "VRV" }
+    ];
+
+    const thermostats = [
+      { name: "Daikin One+", part: "DTST-CWBSA-NI-A" },
+      { name: "Daikin One Touch", part: "DTST-TOU-A" }
+    ];
+
+    const brandSelect = document.getElementById('brandSelect');
+    const equipmentTypeContainer = document.getElementById('equipmentTypeContainer');
+    const equipmentTypeSelect = document.getElementById('equipmentTypeSelect');
+    const outdoorSelect = document.getElementById('outdoorSelect');
+    const indoorSelect = document.getElementById('indoorSelect');
+    const details = document.getElementById('details');
+
+    let currentIndoorList = [];
+    let currentOutdoorList = [];
+    let compatibilityData = [];
+
+    function populateDropdown(select, list, placeholder) {
+      select.innerHTML = `<option value="">-- Choose ${placeholder} --</option>`;
+      list.forEach((item, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${item.model} (${item.type})`;
+        select.appendChild(option);
+      });
+    }
+
+    function filterUnits(brand, equipmentType) {
+      if (brand === "Daikin" && equipmentType) {
+        return {
+          indoors: indoorUnits.filter(u => u.brand === brand && u.equipmentType === equipmentType),
+          outdoors: outdoorUnits.filter(u => u.brand === brand && u.equipmentType === equipmentType)
+        };
+      } else if (brand) {
+        // For other brands, show all units for that brand (ignore equipment type)
+        return {
+          indoors: indoorUnits.filter(u => u.brand === brand),
+          outdoors: outdoorUnits.filter(u => u.brand === brand)
+        };
+      } else {
+        // No brand selected, empty lists
+        return { indoors: [], outdoors: [] };
+      }
+    }
+
+    brandSelect.addEventListener('change', () => {
+      const brand = brandSelect.value;
+      details.innerHTML = '';
+      equipmentTypeSelect.value = '';
+      indoorSelect.innerHTML = '<option value="">-- Choose Indoor Unit --</option>';
+      outdoorSelect.innerHTML = '<option value="">-- Choose Outdoor Unit --</option>';
+
+      if (brand === "Daikin") {
+        equipmentTypeContainer.style.display = "block";
+        // Clear indoor/outdoor until equipment type selected
+        currentIndoorList = [];
+        currentOutdoorList = [];
+      } else {
+        equipmentTypeContainer.style.display = "none";
+        const filtered = filterUnits(brand, null);
+        currentIndoorList = filtered.indoors;
+        currentOutdoorList = filtered.outdoors;
+        populateDropdown(indoorSelect, currentIndoorList, "Indoor Unit");
+        populateDropdown(outdoorSelect, currentOutdoorList, "Outdoor Unit");
+      }
+    });
+
+    equipmentTypeSelect.addEventListener('change', () => {
+      const brand = brandSelect.value;
+      const equipmentType = equipmentTypeSelect.value;
+      details.innerHTML = '';
+      indoorSelect.innerHTML = '<option value="">-- Choose Indoor Unit --</option>';
+      outdoorSelect.innerHTML = '<option value="">-- Choose Outdoor Unit --</option>';
+
+      if (brand === "Daikin" && equipmentType) {
+        const filtered = filterUnits(brand, equipmentType);
+        currentIndoorList = filtered.indoors;
+        currentOutdoorList = filtered.outdoors;
+        populateDropdown(indoorSelect, currentIndoorList, "Indoor Unit");
+        populateDropdown(outdoorSelect, currentOutdoorList, "Outdoor Unit");
+      } else {
+        currentIndoorList = [];
+        currentOutdoorList = [];
+      }
+    });
+
+    function checkCompatibilityWithJSON(outdoor, indoor) {
+      if (!outdoor || !indoor) return null;
+
+      const isIndoorCommunicatingFurnace = indoor.type === "Furnace" && indoor.compatible === "communicating";
+      const isOutdoorNonCommAC = outdoor.type === "AC" && outdoor.communicating === false;
+
+      if (isIndoorCommunicatingFurnace && isOutdoorNonCommAC) {
+        return true;
+      }
+
+      const entry = compatibilityData.find(e => e.outdoor === outdoor.model);
+      if (!entry) return false;
+      return entry.compatibleIndoors.includes(indoor.model);
+    }
+
+    function updateDetails() {
+      const indoor = currentIndoorList[indoorSelect.value];
+      const outdoor = currentOutdoorList[outdoorSelect.value];
+
+      if (!outdoor || !indoor) {
+        details.innerHTML = '';
+        return;
+      }
+
+      const compatible = checkCompatibilityWithJSON(outdoor, indoor);
+
+      let thermostatInfo = '';
+      if (compatible) {
+        thermostatInfo = `
+          <h3>Thermostat Compatibility</h3>
+          <p class="compatible">✅ Compatible with Daikin One thermostats</p>
+          <ul>
+            ${thermostats.map(t => `
+              <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <img src="${t.name === 'Daikin One+' ? 'daikinoneplus.jpeg' : 'daikinonetouch.jpeg'}"
+                  alt="${t.name}" width="60" height="60" style="object-fit: contain; border: 1px solid #ccc; padding: 4px;" />
+                <span>${t.name} (Part#: ${t.part})</span>
+              </li>`).join('')}
+          </ul>
+        `;
+      }
+
+      details.innerHTML = `
+        <h3>Indoor Unit</h3>
+        <p><strong>Brand:</strong> ${indoor.brand}</p>
+        <p><strong>Model:</strong> ${indoor.model}</p>
+        <p><strong>Type:</strong> ${indoor.type}</p>
+        <p><strong>Equipment Type:</strong> ${indoor.equipmentType}</p>
+        <p><strong>Compatible With:</strong> ${indoor.compatible === 'communicating' ? 'Communicating Thermostats' : 'Non-Communicating Systems'}</p>
+
+        <h3>Outdoor Unit</h3>
+        <p><strong>Brand:</strong> ${outdoor.brand}</p>
+        <p><strong>Model:</strong> ${outdoor.model}</p>
+        <p><strong>Type:</strong> ${outdoor.type}</p>
+        <p><strong>Equipment Type:</strong> ${outdoor.equipmentType}</p>
+        <p><strong>SEER2:</strong> ${outdoor.SEER2}</p>
+        ${outdoor.HSPF2 !== undefined ? `<p><strong>HSPF2:</strong> ${outdoor.HSPF2}</p>` : ''}
+        <p><strong>Communicating:</strong> ${outdoor.communicating ? 'Yes' : 'No'}</p>
+
+        <h3>Compatibility Result</h3>
+        <p class="${compatible ? 'compatible' : 'incompatible'}">
+          ${compatible ? '✅ Compatible' : '❌ Incompatible per compatibility table'}
+        </p>
+
+        ${thermostatInfo}
+      `;
+    }
+
+    outdoorSelect.addEventListener('change', updateDetails);
+    indoorSelect.addEventListener('change', updateDetails);
+
+    fetch('compatibility.json')
+      .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then(data => {
+        compatibilityData = data;
+      })
+      .catch(error => {
+        console.error("Failed to load compatibility.json:", error);
+        details.innerHTML = `<p style="color:red;">Failed to load compatibility data. Compatibility checks may not work.</p>`;
+      });
+  </script>
+</body>
+</html>
